@@ -1,23 +1,34 @@
 import { Fragment } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAuthContext } from "./hooks/useAuthContext";
 
+import Navbar from "./components/Navbar";
 import Home from "./pages/home/Home";
 import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
 
 function App() {
-  const { authIsReady } = useAuthContext();
+  const { authIsReady, user } = useAuthContext();
   return (
     <Fragment>
       {authIsReady && (
         <BrowserRouter>
           <Navbar />
           <Routes>
-            <Route path='/' element={<Home />} exact />
-            <Route path='/login' element={<Login />} exact />
-            <Route path='/signup' element={<Signup />} exact />
+            <Route
+              path='/'
+              element={user ? <Home /> : <Navigate replace to='/login' />}
+            />
+            <Route
+              path='/login'
+              element={!user ? <Login /> : <Navigate replace to='/' />}
+              exact
+            />
+            <Route
+              path='/signup'
+              element={!user ? <Signup /> : <Navigate replace to='/' />}
+              exact
+            />
           </Routes>
         </BrowserRouter>
       )}
